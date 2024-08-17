@@ -2,23 +2,37 @@
 import { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import FeederCardGrid from "../../components/FeederCardGrid";
-import { getPosts } from "../../utils/stellar";
+import { getPosts, addPost } from "../../utils/soroban";
 
 const FeedersDashboard = () => {
   const [feedings, setFeedings] = useState([]);
 
-  useEffect(() => {
-    getPost()
-  }, []);
+  const handleAddPost = async () => {
+    const caller = "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV";
+    const id = 3;
+    const title = "Feed Cats";
+    const description = "Providing food";
+    const walletAddress = "GABCDEFH";
+    const amountRequested = 100;
+    const imageUrl = "https://example.com/cat.jpg";
 
-  const getPost = async () => {
+    await addPost(
+      caller,
+      id,
+      title,
+      description,
+      walletAddress,
+      amountRequested,
+      imageUrl
+    );
+  };
+
+  const handleGetPosts = async () => {
     await getPosts(
-      "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
-      "get_posts",
-      null
+      "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV"
     ).then((values) => console.log(values));
   };
-  
+
   const addFeeding = (newFeeding) => {
     setFeedings([...feedings, newFeeding]);
   };
@@ -38,6 +52,8 @@ const FeedersDashboard = () => {
   return (
     <Layout>
       <h2 className="text-xl">Welcome to the Feeders Dashboard</h2>
+      <button onClick={handleAddPost}>Add Post</button> <br /><br />
+      <button onClick={handleGetPosts}>Get Posts</button>
       {/* Additional Feeder-specific content can go here */}
       <FeederCardGrid
         feedings={feedings}

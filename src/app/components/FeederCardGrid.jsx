@@ -1,9 +1,6 @@
 // components/FeederCardGrid.jsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Modal from "./Modal";
-import { getPosts, addPost } from "../utils/stellar"; // Import Stellar functions
-import { scval  } from "@stellar/stellar-sdk";
-import * as StellarSdk from '@stellar/stellar-sdk';
 
 const FeederCardGrid = () => {
   const initialFeedings = [
@@ -43,47 +40,11 @@ const FeederCardGrid = () => {
   const [currentIndex, setCurrentIndex] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  // Fetch posts from Stellar
-  const fetchPosts = async () => {
-    const result = await getPosts(
-      "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV"
-    );
-    const result_string = StellarSdk.scValToNative(result);
-    console.log(result_string);
-    
-    // const decodedData = scval.decode(result);
-
-    // console.log(decodedData);
-    // console.log(result);
-
-    // setFeedings(result);
-  };
-
   const handleInputChange = (e) => {
     setNewFeeding({ ...newFeeding, [e.target.name]: e.target.value });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (isEditing) {
-  //     const updatedFeedings = feedings.map((feeding, index) =>
-  //       index === currentIndex ? newFeeding : feeding
-  //     );
-  //     setFeedings(updatedFeedings);
-  //     setIsEditing(false);
-  //     setCurrentIndex(null);
-  //   } else {
-  //     setFeedings([...feedings, { ...newFeeding, id: feedings.length + 1 }]);
-  //   }
-  //   setNewFeeding({ title: "", image: "", wallet: "", description: "" });
-  //   setIsModalOpen(false);
-  // };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (isEditing) {
       const updatedFeedings = feedings.map((feeding, index) =>
@@ -93,16 +54,7 @@ const FeederCardGrid = () => {
       setIsEditing(false);
       setCurrentIndex(null);
     } else {
-      const createdPost = await addPost(
-        "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
-        1,
-        newFeeding.title,
-        newFeeding.description,
-        newFeeding.wallet,
-        0,
-        newFeeding.image
-      );
-      setFeedings([...feedings, createdPost]);
+      setFeedings([...feedings, { ...newFeeding, id: feedings.length + 1 }]);
     }
     setNewFeeding({ title: "", image: "", wallet: "", description: "" });
     setIsModalOpen(false);

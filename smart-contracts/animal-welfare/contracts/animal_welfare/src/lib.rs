@@ -34,11 +34,14 @@ impl HelloWorld {
         amount_requested: u32,
         image_url: String,
     ) {
+        // Check if the 'posts' key exists, and if not, initialize it
         let mut posts: Vec<Post> = env
             .storage()
             .instance()
             .get(&Symbol::new(&env, "posts"))
-            .unwrap_or(Vec::new(&env));
+            .unwrap_or_else(|| Vec::new(&env));
+    
+        // Create a new post
         let post = Post {
             id,
             title,
@@ -48,12 +51,19 @@ impl HelloWorld {
             amount_received: 0,
             image_url,
         };
+    
+        // Add the post to the vector
         posts.push_back(post);
+    
+        // Save the updated posts vector back to storage
         env.storage()
             .instance()
             .set(&Symbol::new(&env, "posts"), &posts);
+    
+        // Log success
         log!(&env, "Post with ID: {} added successfully.", id);
     }
+    
 
     pub fn delete_post(env: Env, id: u32) {
         let posts: Vec<Post> = env

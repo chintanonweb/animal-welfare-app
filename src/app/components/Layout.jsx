@@ -4,11 +4,15 @@ import { FaBeer, FaChartPie, FaBars } from "react-icons/fa";
 import { TbHeartHandshake } from "react-icons/tb";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { checkConnection, retrievePublicKey } from "../utils/Freighter"; // Import functions from freighter module
 
 const Layout = ({ children }) => {
   const [user, setUser] = useState("");
   const [dropdownOpen, setdropdownOpen] = useState(false);
   const [sidebarOpen, setsidebarOpen] = useState(false);
+  const [connected, setConnected] = useState(false); // State to track if the user is connected
+  const [publicKey, setPublicKey] = useState(null); // State to store the public key
+  const [isConnecting, setIsConnecting] = useState(false); // State to track if the connection is in progress
   const router = useRouter();
   const pathname = usePathname();
 
@@ -25,6 +29,27 @@ const Layout = ({ children }) => {
     localStorage.removeItem("user");
     router.push("/auth/login");
   };
+
+  async function connect() {
+    setIsConnecting(true); // Set isConnecting to true when connection process starts
+    try {
+      // Check if connection to Freighter is established
+      if (await checkConnection()) {
+        // Retrieve public key from Freighter
+        const publicKey = await retrievePublicKey();
+        if (publicKey) {
+          console.log(publicKey);
+          
+          setPublicKey(publicKey); // Set the retrieved public key
+          setConnected(true); // Set connected state to true
+        }
+      }
+    } catch (error) {
+      console.error("Error connecting to Freighter:", error); // Log any errors during the connection process
+    } finally {
+      setIsConnecting(false); // Set isConnecting to false when connection process ends
+    }
+  }
 
   const transClass = dropdownOpen ? "block" : "hidden";
   const sidebarClass = sidebarOpen ? "transform-none" : "-translate-x-full";
@@ -53,6 +78,14 @@ const Layout = ({ children }) => {
               </a>
             </div>
             <div className="flex items-center">
+            <button
+                    onClick={connect} // Call the connect function when the button is clicked
+                    className="text-white overflow-hidden truncate w-40  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    disabled={isConnecting} // Disable the button if the connection is in progress
+                  >
+                    {isConnecting ? "Connecting.." : connected ? publicKey : "Connect to Freighter"}{" "}
+                    {/* Show appropriate button text based on isConnecting state */}
+                  </button>
               <div className="flex items-center ms-3 relative">
                 <div>
                   <button

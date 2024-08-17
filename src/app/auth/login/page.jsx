@@ -10,8 +10,9 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const user = JSON.parse(localStorage.getItem(email));
-
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log(user);
+    
     if (user && user.password === password) {
       localStorage.setItem("user", JSON.stringify(user));
 

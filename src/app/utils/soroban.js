@@ -12,29 +12,23 @@ import { userSignTransaction } from "../utils/Freighter";
 let rpcUrl = "https://soroban-testnet.stellar.org";
 
 let contractAddress =
-  "CAJZYA7DJUJ7UJ6ZPUQDRBJ72DFTEIRTM4CZUMLOZRWAMB3EBABNC6GX";
+  "CD5JCCWTAFUW5HUJ4AYFWUW7UKQM5DETDUBMI4AAYMPWSXYM62XUKK3V";
 
 // Convert Account Address to ScVal form
 const accountToScVal = (account) => new Address(account).toScVal();
 
 // Convert String to ScVal form
-const stringToScValString = (value) => {
-  return nativeToScVal(value);
-};
+const stringToScValString = (value) => nativeToScVal(value);
 
-// Convert Number to U64 ScVal form
-const numberToU64 = (value) => {
-  return nativeToScVal(value, { type: "u64" });
-};
+// Convert Number to U64 ScVal
+const numberToU64 = (value) => nativeToScVal(value, { type: "u64" });
 
-const numberToU32 = (value) => {
-  return nativeToScVal(value, { type: "u32" });
-};
 let params = {
   fee: BASE_FEE,
   networkPassphrase: Networks.TESTNET,
 };
 
+// Function to interact with the smart contract
 async function contractInt(caller, functName, values) {
   const provider = new SorobanRpc.Server(rpcUrl, { allowHttp: true });
   const sourceAccount = await provider.getAccount(caller);
@@ -60,7 +54,7 @@ async function contractInt(caller, functName, values) {
 
   let _buildTx = await provider.prepareTransaction(buildTx);
 
-  let prepareTx = _buildTx.toXDR(); // pre-encoding (converting it to XDR format)
+  let prepareTx = _buildTx.toXDR(); // Pre-encoding (converting it to XDR format)
 
   let signedTx = await userSignTransaction(prepareTx, "TESTNET", caller);
 
@@ -76,6 +70,7 @@ async function contractInt(caller, functName, values) {
     }
     if (sendTx.status === "PENDING") {
       let txResponse = await provider.getTransaction(sendTx.hash);
+      // Continuously checking the transaction status until it gets successfully added to the blockchain ledger or it gets rejected
       while (txResponse.status === "NOT_FOUND") {
         txResponse = await provider.getTransaction(sendTx.hash);
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -91,91 +86,166 @@ async function contractInt(caller, functName, values) {
   }
 }
 
-// Function to add a post
-async function addPost(
+// Function to create a new post
+async function createPost(
   caller,
-  id,
   title,
   description,
-  wallet_address,
-  amount_requested,
-  image_url
+  amountRequested,
+  imageUrl,
+  feederAddress
 ) {
-  let idScVal = numberToU32(id);
   let titleScVal = stringToScValString(title);
   let descriptionScVal = stringToScValString(description);
-  let walletAddressScVal = stringToScValString(wallet_address);
-  let amountRequestedScVal = numberToU32(amount_requested);
-  let imageUrlScVal = stringToScValString(image_url);
-
-  let values = [
-    idScVal,
+  let amountRequestedScVal = numberToU64(amountRequested);
+  let imageUrlScVal = stringToScValString(imageUrl);
+  let feederAddressScVal = stringToScValString(feederAddress);
+  const values = [
     titleScVal,
     descriptionScVal,
-    walletAddressScVal,
     amountRequestedScVal,
     imageUrlScVal,
+    feederAddressScVal,
   ];
-  console.log(values);
 
   try {
-    const result = await contractInt(caller, "add_post", values);
-    console.log(`Post with ID ${id} added successfully!`);
-    console.log(result);
-    
-    return result;
+    const postId = await contractInt(caller, "create_post", values);
+    let resolvedPostId = Number(postId?._value?._value);
+    console.log(`Post ID - ${resolvedPostId}, is Created!!`);
+    return resolvedPostId;
   } catch (error) {
-    console.error("Failed to add post:", error);
+    console.log("Post not created. Check if you already have an active post.");
+  }
+}
+
+// Function to get a post by its ID
+async function getPostById(caller, postId) {
+  let values = numberToU64(postId);
+
+  try {
+    let result = await contractInt(caller, "get_post_by_id", values);
+
+    // Extract values from result
+    let id = Number(result?._value[4]?._attributes?.val?._value);
+    let title = result?._value[7]?._attributes?.val?._value?.toString();
+    let description = result?._value[2]?._attributes?.val?._value?.toString();
+    let amountRequested = Number(result?._value[1]?._attributes?.val?._value);
+    let amountReceived = Number(result?._value[0]?._attributes?.val?._value);
+    let imageUrl = result?._value[5]?._attributes?.val?._value?.toString();
+    let feederAddress = result?._value[3]?._attributes?.val?._value?.toString();
+    let isActive = result?._value[6]?._attributes?.val?._value;
+
+    console.log({
+      id,
+      title,
+      description,
+      amountRequested,
+      amountReceived,
+      imageUrl,
+      feederAddress,
+      isActive,
+    });
+
+    return {
+      id,
+      title,
+      description,
+      amountRequested,
+      imageUrl,
+      amountReceived,
+      feederAddress,
+      isActive,
+    };
+  } catch (error) {
+    console.log("Unable to fetch post details.");
   }
 }
 
 // Function to get all posts
-async function getPosts(caller) {
+async function getAllPosts(caller) {
   try {
-    // Call the contract function to get all posts
-    let result = await contractInt(caller, "get_posts", null);
+    let result = await contractInt(caller, "get_all_posts", null);
     console.log(result);
-    
-    // Process each post from the result
-    let posts = result?._value || [];
-    let postsArray = [];
+    let posts = result?._value.map((post) => ({
+      id: Number(post?._value[4]?._attributes?.val?._value),
+      title: post?._value[7]?._attributes?.val?._value?.toString(),
+      description: post?._value[2]?._attributes?.val?._value?.toString(),
+      amountRequested: Number(post?._value[1]?._attributes?.val?._value),
+      amountReceived: Number(post?._value[0]?._attributes?.val?._value),
+      imageUrl: post?._value[5]?._attributes?.val?._value?.toString(),
+      feederAddress: post?._value[3]?._attributes?.val?._value?.toString(),
+      isActive: post?._value[6]?._attributes?.val?._value,
+    }));
 
-    for (let post of posts) {
-      // Extract and convert values from the result
-      let id = Number(post?._attributes?.id?._value);
-      let title = post?._attributes?.title?._value?.toString();
-      let description = post?._attributes?.description?._value?.toString();
-      let walletAddress = post?._attributes?.wallet_address?._value?.toString();
-      let amountRequested = Number(post?._attributes?.amount_requested?._value);
-      let amountReceived = Number(post?._attributes?.amount_received?._value);
-      let imageUrl = post?._attributes?.image_url?._value?.toString();
+    console.log(posts);
 
-      // Log extracted values for debugging
-      console.log(`Post ID: ${id}`);
-      console.log(`Title: ${title}`);
-      console.log(`Description: ${description}`);
-      console.log(`Wallet Address: ${walletAddress}`);
-      console.log(`Amount Requested: ${amountRequested}`);
-      console.log(`Amount Received: ${amountReceived}`);
-      console.log(`Image URL: ${imageUrl}`);
-
-      // Create a post object and add it to the array
-      postsArray.push({
-        id,
-        title,
-        description,
-        walletAddress,
-        amountRequested,
-        amountReceived,
-        imageUrl,
-      });
-    }
-
-    return postsArray;
+    return posts;
   } catch (error) {
-    console.error("Failed to fetch posts:", error);
-    return [];
+    console.log("Unable to fetch all posts.");
   }
 }
 
-export { addPost, getPosts };
+// Function to update a post
+async function updatePost(
+  caller,
+  postId,
+  newTitle = null,
+  newDescription = null,
+  newAmountRequested = null,
+  newImageUrl = null,
+  deactivate = false
+) {
+  let postIdScVal = numberToU64(postId);
+  let newTitleScVal = newTitle ? stringToScValString(newTitle) : null;
+  let newDescriptionScVal = newDescription ? stringToScValString(newDescription) : null;
+  let newAmountRequestedScVal = newAmountRequested ? numberToU64(newAmountRequested) : null;
+  let newImageUrlScVal = newImageUrl ? stringToScValString(newImageUrl) : null;
+  let deactivateScVal = nativeToScVal(deactivate, { type: "bool" });
+
+  const values = [
+    postIdScVal,
+    newTitleScVal,
+    newDescriptionScVal,
+    newAmountRequestedScVal,
+    newImageUrlScVal,
+    deactivateScVal
+  ];
+
+  try {
+    await contractInt(caller, "update_post", values);
+    console.log(`Post ID - ${postId}, has been updated!`);
+  } catch (error) {
+    console.log("Unable to update post. Please check the provided details.");
+  }
+}
+
+// Function to delete a post by its ID
+async function deletePost(caller, postId) {
+  let postIdScVal = numberToU64(postId);
+
+  try {
+    await contractInt(caller, "delete_post", postIdScVal);
+    console.log(`Post ID - ${postId}, has been deleted!`);
+  } catch (error) {
+    console.log("Unable to delete post. Please ensure the post exists.");
+  }
+}
+
+// Function to donate to a post by its ID
+async function donate(caller, postId, amount) {
+  let postIdScVal = numberToU64(postId);
+  let amountScVal = numberToU64(amount);
+
+  const values = [postIdScVal, amountScVal];
+
+  try {
+    await contractInt(caller, "donate", values);
+    console.log(`Donation of ${amount} to Post ID - ${postId} was successful!`);
+  } catch (error) {
+    console.log("Unable to donate. Please check the post ID and amount.");
+  }
+}
+
+
+
+export { createPost, getPostById, getAllPosts, updatePost, deletePost, donate};

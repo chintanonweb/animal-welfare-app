@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Feeder");
+  const [role, setRole] = useState("Donor");
   const router = useRouter();
 
   const handleRegister = (e) => {

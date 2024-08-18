@@ -113,7 +113,7 @@ const FeederCardGrid = () => {
           newFeeding.description,
           newFeeding.amountRequested,
           newFeeding.imageUrl,
-          !newFeeding.isActive
+          newFeeding.isActive
         );
       } else {
         const postId = await createPost(

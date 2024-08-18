@@ -4,7 +4,7 @@ import {
   createPost,
   getAllPosts,
   updatePost,
-  deletePost,
+  deletePostPermanently,
 } from "../utils/soroban";
 
 const FeederCardGrid = () => {
@@ -13,33 +13,33 @@ const FeederCardGrid = () => {
       id: 1,
       title: "Feed the Cats",
       imageUrl: "https://d.newsweek.com/en/full/2050102/stray-cats.jpg",
-      wallet: "0x123456789...",
+      wallet: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
       description: "Help feed the stray cats in the street.",
       amountRequested: 100,
       amountReceived: 50,
-      isActive: true
+      isActive: true,
     },
     {
       id: 2,
       title: "Feed the Dogs",
       imageUrl:
         "https://www.livelaw.in/h-upload/2022/11/16/750x450_444432-1663071834dog.jpeg",
-      wallet: "0x987654321...",
+      wallet: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
       description: "Donate to feed the dogs in the shelter.",
       amountRequested: 200,
       amountReceived: 100,
-      isActive: true
+      isActive: true,
     },
     {
       id: 3,
       title: "Feed the Cows",
       imageUrl:
         "https://cdndailyexcelsior.b-cdn.net/wp-content/uploads/2020/03/page8-1-13.jpg",
-      wallet: "0x987654321...",
+      wallet: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
       description: "Donate to feed the cows in the street.",
       amountRequested: 150,
       amountReceived: 75,
-      isActive: true
+      isActive: true,
     },
   ];
 
@@ -113,7 +113,7 @@ const FeederCardGrid = () => {
           newFeeding.description,
           newFeeding.amountRequested,
           newFeeding.imageUrl,
-          newFeeding.isActive
+          !newFeeding.isActive
         );
       } else {
         const postId = await createPost(
@@ -153,7 +153,7 @@ const FeederCardGrid = () => {
         return;
       }
 
-      await deletePost(storedPublicKey, feedings[index].id);
+      await deletePostPermanently(storedPublicKey, feedings[index].id);
       fetchAllPosts(publicKey);
     } catch (err) {
       console.log("Failed to delete post.", err);
@@ -203,7 +203,13 @@ const FeederCardGrid = () => {
 
   return (
     <div>
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end">
+        <button
+          onClick={() => fetchAllPosts(publicKey)}
+          className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 me-2"
+        >
+          Retry
+        </button>
         <div
           onClick={handleAddNewFeeding}
           type="button"
@@ -231,7 +237,9 @@ const FeederCardGrid = () => {
                 <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                   {feeding.description}
                 </p>
-                <p className="text-sm text-gray-500">{feeding.feederAddress}</p>
+                <p className="text-sm text-gray-500 truncate">
+                  {feeding.feederAddress}
+                </p>
                 <p className="text-sm text-gray-500">
                   Requested: ${feeding.amountRequested}
                 </p>
@@ -251,7 +259,7 @@ const FeederCardGrid = () => {
                   </button>
                   <button
                     onClick={() => handleDelete(index)}
-                    className="bg-red-500 text-white p-2 rounded"
+                    className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                   >
                     Delete
                   </button>
@@ -291,7 +299,7 @@ const FeederCardGrid = () => {
             <input
               type="text"
               name="feederAddress"
-              placeholder="Feeder Address"
+              placeholder="Feeder Wallet Address"
               value={newFeeding.feederAddress}
               onChange={handleInputChange}
               className="border p-2 mb-2 w-full"

@@ -20,6 +20,7 @@ const Layout = ({ children }) => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       setUser(user);
+      connect();
     } else {
       router.push("/auth/login");
     }
@@ -205,13 +206,16 @@ const Layout = ({ children }) => {
             </li>
             <li>
               <Link
-                href="#"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                href="/wallet"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group${
+                  pathname === "/wallet"
+                    ? "bg-gray-100 dark:bg-gray-600 dark:text-white"
+                    : ""
+                }`}
               >
                 <FaBeer />
-                <span className="flex-1 ms-3 whitespace-nowrap">Kanban</span>
-                <span className="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800 bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">
-                  Pro
+                <span className="flex-1 ms-3 whitespace-nowrap">
+                  Wallet & History
                 </span>
               </Link>
             </li>

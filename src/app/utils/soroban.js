@@ -165,7 +165,6 @@ async function getPostById(caller, postId) {
 async function getAllPosts(caller) {
   try {
     let result = await contractInt(caller, "get_all_posts", null);
-    console.log(result);
     let posts = result?._value.map((post) => ({
       id: Number(post?._value[4]?._attributes?.val?._value),
       title: post?._value[7]?._attributes?.val?._value?.toString(),
@@ -231,6 +230,18 @@ async function deletePost(caller, postId) {
   }
 }
 
+// Function to delete a post by its ID
+async function deletePostPermanently(caller, postId) {
+  let postIdScVal = numberToU64(postId);
+
+  try {
+    await contractInt(caller, "delete_post_permanently", postIdScVal);
+    console.log(`Post ID - ${postId}, has been deleted!`);
+  } catch (error) {
+    console.log("Unable to delete post. Please ensure the post exists.");
+  }
+}
+
 // Function to donate to a post by its ID
 async function donate(caller, postId, amount) {
   let postIdScVal = numberToU64(postId);
@@ -248,4 +259,4 @@ async function donate(caller, postId, amount) {
 
 
 
-export { createPost, getPostById, getAllPosts, updatePost, deletePost, donate};
+export { createPost, getPostById, getAllPosts, updatePost, deletePost, donate, deletePostPermanently};

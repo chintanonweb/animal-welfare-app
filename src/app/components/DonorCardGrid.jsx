@@ -10,7 +10,7 @@ const DonorCardGrid = ({ feedings }) => {
           className="w-full bg-white rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
         >
           <img
-            src={feeding.image}
+            src={feeding.imageUrl}
             alt={feeding.title}
             className="rounded-t-lg w-full h-60 object-cover"
           />
@@ -20,6 +20,12 @@ const DonorCardGrid = ({ feedings }) => {
             </h5>
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
               {feeding.description}
+            </p>
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+              Amount Requested: {feeding.amountRequested} XLM
+            </p>
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+              Amount Received: {feeding.amountReceived} XLM
             </p>
             <Link href={`/donors/feeding/${feeding.id}`}>
               <button className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

@@ -39,9 +39,12 @@ const Layout = ({ children }) => {
         const publicKey = await retrievePublicKey();
         if (publicKey) {
           console.log(publicKey);
-          
+
           setPublicKey(publicKey); // Set the retrieved public key
           setConnected(true); // Set connected state to true
+
+          // Store the public key in local storage
+          localStorage.setItem("publicKey", publicKey);
         }
       }
     } catch (error) {
@@ -78,14 +81,18 @@ const Layout = ({ children }) => {
               </a>
             </div>
             <div className="flex items-center">
-            <button
-                    onClick={connect} // Call the connect function when the button is clicked
-                    className="text-white overflow-hidden truncate w-40  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    disabled={isConnecting} // Disable the button if the connection is in progress
-                  >
-                    {isConnecting ? "Connecting.." : connected ? publicKey : "Connect to Freighter"}{" "}
-                    {/* Show appropriate button text based on isConnecting state */}
-                  </button>
+              <button
+                onClick={connect} // Call the connect function when the button is clicked
+                className="text-white overflow-hidden truncate w-40  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                disabled={isConnecting} // Disable the button if the connection is in progress
+              >
+                {isConnecting
+                  ? "Connecting.."
+                  : connected
+                  ? publicKey
+                  : "Connect to Freighter"}{" "}
+                {/* Show appropriate button text based on isConnecting state */}
+              </button>
               <div className="flex items-center ms-3 relative">
                 <div>
                   <button

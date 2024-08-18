@@ -118,10 +118,8 @@ impl AnimalWelfareContract {
             post.image_url = image_url;
         }
 
-        // Deactivate the post if requested
-        if deactivate {
-            post.is_active = false;
-        }
+        // Directly assign the deactivate value to post.is_active
+        post.is_active = !deactivate;
 
         // Store the updated post back in the contract's storage with extended TTL
         env.storage().instance().set(&key, &post);
@@ -170,17 +168,42 @@ impl AnimalWelfareContract {
     pub fn delete_post_permanently(env: Env, post_id: u64) {
         let key = Postbook::Post(post_id);
 
-        // Remove the post from storage
-        env.storage().instance().delete(&key);
+        // Check if the post exists before deleting
+        if env.storage().instance().has(&key) {
+            // Remove the post from storage
+            env.storage().instance().remove(&key);
 
-        // Optionally, update the total post count if needed
-        let mut count_post: u64 = env.storage().instance().get(&COUNT_POST).unwrap_or(0);
-        if post_id <= count_post {
-            count_post -= 1;
-            env.storage().instance().set(&COUNT_POST, &count_post);
+            // Update the total post count
+            let mut count_post: u64 = env.storage().instance().get(&COUNT_POST).unwrap_or(0);
+            if count_post > 0 {
+                count_post -= 1;
+                env.storage().instance().set(&COUNT_POST, &count_post);
+            }
+
+            log!(
+                &env,
+                "Post with ID: {} has been permanently deleted.",
+                post_id
+            );
+        } else {
+            log!(&env, "Post with ID: {} does not exist.", post_id);
+        }
+    }
+
+    // Function to delete all posts
+    pub fn delete_all_posts(env: Env) {
+        let count_post: u64 = env.storage().instance().get(&COUNT_POST).unwrap_or(0);
+
+        // Iterate over all posts and delete them
+        for i in 1..=count_post {
+            let key = Postbook::Post(i);
+            env.storage().instance().remove(&key);
         }
 
-        log!(&env, "Post with ID: {} has been permanently deleted.", post_id);
+        // Reset the post count to zero
+        env.storage().instance().set(&COUNT_POST, &0);
+
+        log!(&env, "All posts have been permanently deleted.");
     }
 
     // Function to donate to a post and update the amount received

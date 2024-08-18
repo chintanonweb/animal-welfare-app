@@ -223,6 +223,7 @@ const DonorCardGrid = () => {
   return (
     <div>
       {loading ? (
+        <div className="flex justify-center items-center h-full">
         <div role="status">
           <svg
             aria-hidden="true"
@@ -241,6 +242,7 @@ const DonorCardGrid = () => {
             />
           </svg>
           <span className="sr-only">Loading...</span>
+        </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-3">

@@ -3,7 +3,6 @@ import Layout from "../components/Layout";
 import { useState, useEffect } from "react";
 
 const Profile = () => {
-
   const [profileDetails, setProfileDetails] = useState({
     name: "",
     email: "",
@@ -14,21 +13,24 @@ const Profile = () => {
   });
 
   const [profileImage, setProfileImage] = useState("");
+  const [user, setUser] = useState(null); // Initialize user state as null
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const data = localStorage.getItem("user");
-      const user = JSON.parse(data);
-      if (user) {
+      const userData = JSON.parse(data);
+      setUser(userData); // Set the user data in state
+
+      if (userData) {
         setProfileDetails({
-          name: user.name || "",
-          email: user.email || "",
-          organization: user.organization || "",
-          location: user.location || "",
-          contact: user.contact || "",
-          profileImage: user.profileImage || "",
+          name: userData.name || "",
+          email: userData.email || "",
+          organization: userData.organization || "",
+          location: userData.location || "",
+          contact: userData.contact || "",
+          profileImage: userData.profileImage || "",
         });
-        setProfileImage(user.profileImage || "");
+        setProfileImage(userData.profileImage || "");
       }
     }
   }, []); // Empty dependency array ensures this only runs once when the component mounts
@@ -52,17 +54,17 @@ const Profile = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Retrieve the current user object from local storage
-    const existingUser = JSON.parse(localStorage.getItem("user"));
-
-    // Merge the existing user object with the updated profile details
-    const updatedUser = { ...existingUser, ...profileDetails };
-
-    // Update the local storage with the merged user object
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-
-    console.log("Profile updated:", updatedUser);
+    if (typeof window !== "undefined" && user) {
+      const existingUser = JSON.parse(localStorage.getItem("user"));
+      const updatedUser = { ...existingUser, ...profileDetails };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      console.log("Profile updated:", updatedUser);
+    }
   };
+
+  if (!user) {
+    return <div>Loading...</div>; // Optionally render a loading state
+  }
 
   return (
     <Layout>
@@ -107,7 +109,7 @@ const Profile = () => {
               required
             />
           </div>
-          {user.role === "Feeder" && (
+          {user?.role === "Feeder" && (
             <div>
               <div className="mb-4">
                 <label className="block text-gray-700">Organization Name</label>

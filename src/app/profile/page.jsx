@@ -1,11 +1,8 @@
 "use client";
-'skip ssr';
 import Layout from "../components/Layout";
 import { useState, useEffect } from "react";
 
 const Profile = () => {
-  const data = localStorage.getItem("user");
-  const user = JSON.parse(data);
 
   const [profileDetails, setProfileDetails] = useState({
     name: "",
@@ -19,16 +16,20 @@ const Profile = () => {
   const [profileImage, setProfileImage] = useState("");
 
   useEffect(() => {
-    if (user) {
-      setProfileDetails({
-        name: user.name || "",
-        email: user.email || "",
-        organization: user.organization || "",
-        location: user.location || "",
-        contact: user.contact || "",
-        profileImage: user.profileImage || "",
-      });
-      setProfileImage(user.profileImage || "");
+    if (typeof window !== "undefined") {
+      const data = localStorage.getItem("user");
+      const user = JSON.parse(data);
+      if (user) {
+        setProfileDetails({
+          name: user.name || "",
+          email: user.email || "",
+          organization: user.organization || "",
+          location: user.location || "",
+          contact: user.contact || "",
+          profileImage: user.profileImage || "",
+        });
+        setProfileImage(user.profileImage || "");
+      }
     }
   }, []); // Empty dependency array ensures this only runs once when the component mounts
 
@@ -50,18 +51,18 @@ const Profile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     // Retrieve the current user object from local storage
     const existingUser = JSON.parse(localStorage.getItem("user"));
-  
+
     // Merge the existing user object with the updated profile details
     const updatedUser = { ...existingUser, ...profileDetails };
-  
+
     // Update the local storage with the merged user object
     localStorage.setItem("user", JSON.stringify(updatedUser));
-  
+
     console.log("Profile updated:", updatedUser);
-  };  
+  };
 
   return (
     <Layout>

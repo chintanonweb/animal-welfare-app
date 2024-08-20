@@ -29,7 +29,64 @@ let params = {
 };
 
 // Function to interact with the smart contract
+// async function contractInt(caller, functName, values) {
+//   const provider = new SorobanRpc.Server(rpcUrl, { allowHttp: true });
+//   const sourceAccount = await provider.getAccount(caller);
+//   const contract = new Contract(contractAddress);
+//   let buildTx;
+
+//   if (values == null) {
+//     buildTx = new TransactionBuilder(sourceAccount, params)
+//       .addOperation(contract.call(functName))
+//       .setTimeout(30)
+//       .build();
+//   } else if (Array.isArray(values)) {
+//     buildTx = new TransactionBuilder(sourceAccount, params)
+//       .addOperation(contract.call(functName, ...values))
+//       .setTimeout(30)
+//       .build();
+//   } else {
+//     buildTx = new TransactionBuilder(sourceAccount, params)
+//       .addOperation(contract.call(functName, values))
+//       .setTimeout(30)
+//       .build();
+//   }
+
+//   let _buildTx = await provider.prepareTransaction(buildTx);
+
+//   let prepareTx = _buildTx.toXDR(); // Pre-encoding (converting it to XDR format)
+
+//   let signedTx = await userSignTransaction(prepareTx, "TESTNET", caller);
+
+//   let tx = TransactionBuilder.fromXDR(signedTx, Networks.TESTNET);
+
+//   try {
+//     let sendTx = await provider.sendTransaction(tx).catch(function (err) {
+//       console.error("Catch-1", err);
+//       return err;
+//     });
+//     if (sendTx.errorResult) {
+//       throw new Error("Unable to submit transaction");
+//     }
+//     if (sendTx.status === "PENDING") {
+//       let txResponse = await provider.getTransaction(sendTx.hash);
+//       // Continuously checking the transaction status until it gets successfully added to the blockchain ledger or it gets rejected
+//       while (txResponse.status === "NOT_FOUND") {
+//         txResponse = await provider.getTransaction(sendTx.hash);
+//         await new Promise((resolve) => setTimeout(resolve, 100));
+//       }
+//       if (txResponse.status === "SUCCESS") {
+//         let result = txResponse.returnValue;
+//         return result;
+//       }
+//     }
+//   } catch (err) {
+//     console.log("Catch-2", err);
+//     return;
+//   }
+// }
 async function contractInt(caller, functName, values) {
+  // ... (keep this function unchanged)
   const provider = new SorobanRpc.Server(rpcUrl, { allowHttp: true });
   const sourceAccount = await provider.getAccount(caller);
   const contract = new Contract(contractAddress);
@@ -54,7 +111,7 @@ async function contractInt(caller, functName, values) {
 
   let _buildTx = await provider.prepareTransaction(buildTx);
 
-  let prepareTx = _buildTx.toXDR(); // Pre-encoding (converting it to XDR format)
+  let prepareTx = _buildTx.toXDR(); 
 
   let signedTx = await userSignTransaction(prepareTx, "TESTNET", caller);
 
@@ -70,7 +127,7 @@ async function contractInt(caller, functName, values) {
     }
     if (sendTx.status === "PENDING") {
       let txResponse = await provider.getTransaction(sendTx.hash);
-      // Continuously checking the transaction status until it gets successfully added to the blockchain ledger or it gets rejected
+      
       while (txResponse.status === "NOT_FOUND") {
         txResponse = await provider.getTransaction(sendTx.hash);
         await new Promise((resolve) => setTimeout(resolve, 100));

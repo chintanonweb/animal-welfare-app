@@ -158,7 +158,7 @@ const DonorCardGrid = () => {
       id: 1,
       title: "Feed the Cats",
       imageUrl: "https://d.newsweek.com/en/full/2050102/stray-cats.jpg",
-      wallet: "GAYV3OQFSIJVDN4ZST6MHNX24PQCDJSZBDRG367YJ2L4MRYC5SGLUV3K",
+      feederAddress: "GAYV3OQFSIJVDN4ZST6MHNX24PQCDJSZBDRG367YJ2L4MRYC5SGLUV3K",
       description: "Help feed the stray cats in the street.",
       amountRequested: 100,
       amountReceived: 50,
@@ -169,7 +169,7 @@ const DonorCardGrid = () => {
       title: "Feed the Dogs",
       imageUrl:
         "https://www.livelaw.in/h-upload/2022/11/16/750x450_444432-1663071834dog.jpeg",
-      wallet: "GAYV3OQFSIJVDN4ZST6MHNX24PQCDJSZBDRG367YJ2L4MRYC5SGLUV3K",
+      feederAddress: "GAYV3OQFSIJVDN4ZST6MHNX24PQCDJSZBDRG367YJ2L4MRYC5SGLUV3K",
       description: "Donate to feed the dogs in the shelter.",
       amountRequested: 200,
       amountReceived: 100,
@@ -180,7 +180,7 @@ const DonorCardGrid = () => {
       title: "Feed the Cows",
       imageUrl:
         "https://cdndailyexcelsior.b-cdn.net/wp-content/uploads/2020/03/page8-1-13.jpg",
-      wallet: "GAYV3OQFSIJVDN4ZST6MHNX24PQCDJSZBDRG367YJ2L4MRYC5SGLUV3K",
+      feederAddress: "GAYV3OQFSIJVDN4ZST6MHNX24PQCDJSZBDRG367YJ2L4MRYC5SGLUV3K",
       description: "Donate to feed the cows in the street.",
       amountRequested: 150,
       amountReceived: 75,
@@ -212,9 +212,9 @@ const DonorCardGrid = () => {
     try {
       setLoading(true);
       const response = await getAllPosts(publicKey); // Replace this with your actual API call
-      const activeFeedings = response?.filter((feeding) => feeding.isActive);
+      const activeFeedings = response?.filter((feeding) => feeding?.isActive);
       setFeedingsData(
-        activeFeedings.length > 0 ? activeFeedings : staticFeedings
+        activeFeedings?.length > 0 ? activeFeedings : staticFeedings
       );
     } catch (error) {
       console.error("Error fetching feedings:", error);
@@ -288,7 +288,7 @@ const DonorCardGrid = () => {
                     Amount Received: {feeding.amountReceived} XLM
                   </p>
                   <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 truncate">
-                    Feeder Wallet Add.: {feeding.feederAddress} XLM
+                    Feeder Wallet Add.: {feeding.feederAddress}
                   </p>
                   <Link href={`/donors/feeding/${feeding.id}`}>
                     <button className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

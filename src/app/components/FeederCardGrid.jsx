@@ -13,7 +13,7 @@ const FeederCardGrid = () => {
       id: 1,
       title: "Feed the Cats",
       imageUrl: "https://d.newsweek.com/en/full/2050102/stray-cats.jpg",
-      wallet: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
+      feederAddress: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
       description: "Help feed the stray cats in the street.",
       amountRequested: 100,
       amountReceived: 50,
@@ -24,7 +24,7 @@ const FeederCardGrid = () => {
       title: "Feed the Dogs",
       imageUrl:
         "https://www.livelaw.in/h-upload/2022/11/16/750x450_444432-1663071834dog.jpeg",
-      wallet: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
+      feederAddress: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
       description: "Donate to feed the dogs in the shelter.",
       amountRequested: 200,
       amountReceived: 100,
@@ -35,7 +35,7 @@ const FeederCardGrid = () => {
       title: "Feed the Cows",
       imageUrl:
         "https://cdndailyexcelsior.b-cdn.net/wp-content/uploads/2020/03/page8-1-13.jpg",
-      wallet: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
+      feederAddress: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
       description: "Donate to feed the cows in the street.",
       amountRequested: 150,
       amountReceived: 75,

@@ -5,16 +5,17 @@ import { TbHeartHandshake } from "react-icons/tb";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { checkConnection, retrievePublicKey } from "../utils/Freighter"; // Import functions from freighter module
+import { useGlobalContext } from "../context/GlobalContext";
 
 const Layout = ({ children }) => {
   const [user, setUser] = useState("");
-  const [dropdownOpen, setdropdownOpen] = useState(false);
-  const [sidebarOpen, setsidebarOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [connected, setConnected] = useState(false); // State to track if the user is connected
-  const [publicKey, setPublicKey] = useState(null); // State to store the public key
   const [isConnecting, setIsConnecting] = useState(false); // State to track if the connection is in progress
   const router = useRouter();
   const pathname = usePathname();
+  const { publicKey, setPublicKey } = useGlobalContext(); // Use publicKey and setPublicKey from context
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -67,7 +68,7 @@ const Layout = ({ children }) => {
               <button
                 type="button"
                 className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                onClick={() => setsidebarOpen(!sidebarOpen)}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
               >
                 <span className="sr-only">Open sidebar</span>
                 <FaBars />
@@ -101,7 +102,7 @@ const Layout = ({ children }) => {
                     className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                     aria-expanded="false"
                     data-dropdown-toggle="dropdown-user"
-                    onClick={() => setdropdownOpen(!dropdownOpen)}
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
                   >
                     <span className="sr-only">Open user menu</span>
                     <img

@@ -6,6 +6,7 @@ import {
   updatePost,
   deletePostPermanently,
 } from "../utils/soroban";
+import { useGlobalContext } from '../context/GlobalContext';
 
 const FeederCardGrid = () => {
   const initialFeedings = [
@@ -43,7 +44,6 @@ const FeederCardGrid = () => {
     },
   ];
 
-  const [publicKey, setPublicKey] = useState("");
   const [feedings, setFeedings] = useState([]);
   const [newFeeding, setNewFeeding] = useState({
     title: "",
@@ -58,13 +58,12 @@ const FeederCardGrid = () => {
   const [currentIndex, setCurrentIndex] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { publicKey } = useGlobalContext(); 
 
   useEffect(() => {
     // Retrieve the public key from local storage
-    const storedPublicKey = localStorage.getItem("publicKey");
-    if (storedPublicKey) {
-      setPublicKey(storedPublicKey);
-      fetchAllPosts(storedPublicKey);
+    if (publicKey) {
+      fetchAllPosts(publicKey);
     } else {
       alert("Please connect your wallet to proceed.");
       // Use static feedings data if public key is not available
@@ -77,7 +76,7 @@ const FeederCardGrid = () => {
     setLoading(true);
     try {
       const posts = await getAllPosts(publicKey);
-      setFeedings(posts.length > 0 ? posts : initialFeedings);
+      setFeedings(posts?.length > 0 ? posts : initialFeedings);
     } catch (err) {
       console.log("Failed to fetch posts.", err);
       alert("Failed to fetch posts.");
@@ -99,15 +98,14 @@ const FeederCardGrid = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const storedPublicKey = localStorage.getItem("publicKey");
-      if (!storedPublicKey) {
+      if (!publicKey) {
         console.error("No public key found in localStorage");
         return;
       }
 
       if (isEditing) {
         await updatePost(
-          storedPublicKey,
+          publicKey,
           newFeeding.id,
           newFeeding.title,
           newFeeding.description,
@@ -117,7 +115,7 @@ const FeederCardGrid = () => {
         );
       } else {
         const postId = await createPost(
-          storedPublicKey,
+          publicKey,
           newFeeding.title,
           newFeeding.description,
           newFeeding.amountRequested,
@@ -147,13 +145,12 @@ const FeederCardGrid = () => {
   const handleDelete = async (index) => {
     setLoading(true);
     try {
-      const storedPublicKey = localStorage.getItem("publicKey");
-      if (!storedPublicKey) {
+      if (!publicKey) {
         console.error("No public key found in localStorage");
         return;
       }
 
-      await deletePostPermanently(storedPublicKey, feedings[index].id);
+      await deletePostPermanently(publicKey, feedings[index].id);
       fetchAllPosts(publicKey);
     } catch (err) {
       console.log("Failed to delete post.", err);

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import * as StellarSdk from "@stellar/stellar-sdk";
 import { getAllPosts, donate } from "../utils/soroban";
 import Link from "next/link";
+import { useGlobalContext } from '../context/GlobalContext';
 
 // Modal Component
 const DonateModal = ({
@@ -15,6 +16,7 @@ const DonateModal = ({
   const [amount, setAmount] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [loading, setLoading] = useState(false);
+  const { publicKey } = useGlobalContext(); 
 
   const handleDonate = async () => {
     if (!amount || !secretKey) {
@@ -28,12 +30,11 @@ const DonateModal = ({
       // Call sendFunds and wait for it to complete
       await sendFunds(destinationAddress, secretKey, amount);
 
-      const storedPublicKey = localStorage.getItem("publicKey");
-      if (!storedPublicKey) {
+      if (!publicKey) {
         alert("Please connect your wallet to proceed.");
         return;
       }
-      await donate(storedPublicKey, feedingId, amount);
+      await donate(publicKey, feedingId, amount);
 
       // Notify user and close modal
       alert("Donation successful!");
@@ -192,14 +193,11 @@ const DonorCardGrid = () => {
   const [currentFeeding, setCurrentFeeding] = useState(null);
   const [feedingsData, setFeedingsData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [publicKey, setPublicKey] = useState("");
+  const { publicKey } = useGlobalContext(); 
 
   useEffect(() => {
-    // Retrieve the public key from local storage
-    const storedPublicKey = localStorage.getItem("publicKey");
-    if (storedPublicKey) {
-      setPublicKey(storedPublicKey);
-      fetchFeedings(storedPublicKey);
+    if (publicKey) {
+      fetchFeedings(publicKey);
     } else {
       alert("Please connect your wallet to proceed.");
       // Use static feedings data if public key is not available
@@ -226,7 +224,7 @@ const DonorCardGrid = () => {
 
   const handleDonationSuccess = async () => {
     // Fetch all posts after successful donation
-    await fetchFeedings(localStorage.getItem("publicKey"));
+    await fetchFeedings(publicKey);
   };
 
   return (

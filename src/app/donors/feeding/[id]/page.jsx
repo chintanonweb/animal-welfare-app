@@ -2,15 +2,16 @@
 import { useState, useEffect } from "react";
 import Layout from "../../../components/Layout";
 import { getPostById } from "../../../utils/soroban";
+import { useGlobalContext } from '../../../context/GlobalContext';
 
 const FeedingDetails = ({ params }) => {
   const { id } = params;
   const [feeding, setFeeding] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { publicKey } = useGlobalContext(); 
 
   useEffect(() => {
     const fetchFeedingDetails = async () => {
-      const publicKey = localStorage.getItem("publicKey");
       if (publicKey) {
         try {
           const response = await getPostById(publicKey, id);
@@ -99,19 +100,19 @@ const FeedingDetails = ({ params }) => {
             alt={feeding.title}
           />
           <div className="flex flex-col p-4 leading-normal">
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white truncate">
               {feeding.title}
             </h5>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 truncate">
               {feeding.description}
             </p>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 truncate">
               Amount Requested: {feeding.amountRequested} XLM
             </p>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 truncate">
               Amount Received: {feeding.amountReceived} XLM
             </p>
-            <p className="text-sm text-gray-500 overflow-hidden truncate w-64">
+            <p className="text-sm text-gray-500 overflow-hidden truncate w-64 truncate">
               Wallet: {feeding.feederAddress}
             </p>
             {/*<button className="bg-green-500 text-white p-2 rounded mt-4 self-end mt-auto">

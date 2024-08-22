@@ -12,7 +12,7 @@ import { userSignTransaction } from "../utils/Freighter";
 let rpcUrl = "https://soroban-testnet.stellar.org";
 
 let contractAddress =
-  "CASFCZHAEVT5QVBIP5MJFVGOAWGY5HUX5VRMSVTL2GYDW643ILF37632";
+  "CADDQMSNMHHEU6SWMD3BLWPCTSQ44TNCPOUZ2VRXGSZM4DPSGJPLNFA3";
 
 // Convert Account Address to ScVal form
 const accountToScVal = (account) => new Address(account).toScVal();

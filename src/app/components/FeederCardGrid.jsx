@@ -14,7 +14,7 @@ const FeederCardGrid = () => {
       id: 1,
       title: "Feed the Cats",
       imageUrl: "https://d.newsweek.com/en/full/2050102/stray-cats.jpg",
-      feederAddress: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
+      feederAddress: "GAYV3OQFSIJVDN4ZST6MHNX24PQCDJSZBDRG367YJ2L4MRYC5SGLUV3K",
       description: "Help feed the stray cats in the street.",
       amountRequested: 100,
       amountReceived: 50,
@@ -25,7 +25,7 @@ const FeederCardGrid = () => {
       title: "Feed the Dogs",
       imageUrl:
         "https://www.livelaw.in/h-upload/2022/11/16/750x450_444432-1663071834dog.jpeg",
-      feederAddress: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
+      feederAddress: "GAYV3OQFSIJVDN4ZST6MHNX24PQCDJSZBDRG367YJ2L4MRYC5SGLUV3K",
       description: "Donate to feed the dogs in the shelter.",
       amountRequested: 200,
       amountReceived: 100,
@@ -36,7 +36,7 @@ const FeederCardGrid = () => {
       title: "Feed the Cows",
       imageUrl:
         "https://cdndailyexcelsior.b-cdn.net/wp-content/uploads/2020/03/page8-1-13.jpg",
-      feederAddress: "GBXEE2WQVDPCQDYWJKDEHPHCFLBIG33IGQQI2AQ47XJ4SZ46BKAEB7BV",
+      feederAddress: "GAYV3OQFSIJVDN4ZST6MHNX24PQCDJSZBDRG367YJ2L4MRYC5SGLUV3K",
       description: "Donate to feed the cows in the street.",
       amountRequested: 150,
       amountReceived: 75,
@@ -164,7 +164,7 @@ const FeederCardGrid = () => {
     setNewFeeding({
       title: "",
       imageUrl: "",
-      feederAddress: "",
+      feederAddress: publicKey,
       description: "",
       amountRequested: 0,
       amountReceived: 0,
@@ -205,7 +205,7 @@ const FeederCardGrid = () => {
           onClick={() => fetchAllPosts(publicKey)}
           className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 me-2"
         >
-          Retry
+          Reload Data
         </button>
         <div
           onClick={handleAddNewFeeding}
@@ -254,12 +254,12 @@ const FeederCardGrid = () => {
                   >
                     Edit
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => handleDelete(index)}
                     className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                   >
                     Delete
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
@@ -300,7 +300,7 @@ const FeederCardGrid = () => {
               value={newFeeding.feederAddress}
               onChange={handleInputChange}
               className="border p-2 mb-2 w-full"
-              required
+              readOnly
             />
             <textarea
               name="description"

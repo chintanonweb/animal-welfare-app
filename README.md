@@ -89,7 +89,7 @@ soroban contract optimize --wasm target/wasm32-unknown-unknown/release/hello_wor
 stellar contract deploy --wasm target\wasm32-unknown-unknown\release\hello_world.wasm  --network testnet --source alice
 ```
 
-**_Deployed address of this smartcontract:_** `CASFCZHAEVT5QVBIP5MJFVGOAWGY5HUX5VRMSVTL2GYDW643ILF37632`
+**_Deployed address of this smartcontract:_** `CADDQMSNMHHEU6SWMD3BLWPCTSQ44TNCPOUZ2VRXGSZM4DPSGJPLNFA3`
 
 \*NOTE: If you get the XDR Error `error: xdr processing error: xdr value invalid`, then follow this [article](https://stellar.org/blog/developers/protocol-21-upgrade-guide).
 

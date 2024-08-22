@@ -31,7 +31,7 @@ const DonateModal = ({
       await sendFunds(destinationAddress, secretKey, amount);
 
       if (!publicKey) {
-        alert("Please connect your wallet to proceed.");
+        alert("Please connect your wallet to proceed. Static data will be displayed instead.");
         return;
       }
       await donate(publicKey, feedingId, amount);
